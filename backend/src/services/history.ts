@@ -1,4 +1,5 @@
-import { Match, Player, Winner, History } from "../types";
+import { Match, History } from "../types";
+import { computeWinner } from "../utils/computeWinner";
 
 export async function fetchHistory(cursor: string | null): Promise<History> {
   const response = await fetch(`${process.env.REAKTOR_API_URL}/history${cursor ? `?cursor=${cursor}` : ""}`, {
@@ -20,22 +21,4 @@ export async function fetchHistory(cursor: string | null): Promise<History> {
   });
 
   return data as History;
-}
-
-export function computeWinner(playerA: Player, playerB: Player): Winner | null {
-  if (!["ROCK", "PAPER", "SCISSORS"].includes(playerA.played) || !["ROCK", "PAPER", "SCISSORS"].includes(playerB.played)) {
-    return null;
-  }
-
-  if (playerA.played === playerB.played) {
-    return "DRAW";
-  }
-
-  if ((playerA.played === "ROCK" && playerB.played === "SCISSORS") ||
-      (playerA.played === "PAPER" && playerB.played === "ROCK") ||
-      (playerA.played === "SCISSORS" && playerB.played === "PAPER")) {
-    return "A";
-  }
-
-  return "B";
 }
