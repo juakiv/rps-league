@@ -8,7 +8,7 @@ export interface Player {
 
 export interface Match {
   gameId: string;
-  timestamp: number;
+  time: number;
   playerA: Player;
   playerB: Player;
   winner?: Winner;
