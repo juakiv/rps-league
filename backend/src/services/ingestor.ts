@@ -11,7 +11,7 @@ import { matchesTable, NewMatch } from "../db/schema";
 export async function ingestHistory() {
   let cursor: string | null = null;
   let totalMatches = 0;
-  let i = 0;
+  let i = 11;
 
   // temporary test
   while(i < 10) {
