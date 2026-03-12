@@ -8,15 +8,20 @@ import { getDayRange } from "../utils/getDayRange";
 
 const matchesRouter = Router();
 
-matchesRouter.get("/", (_req, res) => {
-  res.json({ message: "Matches endpoint" });
+// add pagination to all endpoints that return multiple matches
+// maybe make a reusable paginator util
+// move business logic to controllers
+
+matchesRouter.get("/", async (_req, res) => {
+  const matches = await db.select().from(matchesTable).orderBy(asc(matchesTable.timestamp));
+  res.json(matches);
 });
 
 matchesRouter.get("/:date", async (req, res) => {
   const { date } = req.params;
   const { start, end } = getDayRange(new Date(date));
 
-  await db
+  const matches = await db
     .select()
     .from(matchesTable)
     .where(
@@ -25,13 +30,9 @@ matchesRouter.get("/:date", async (req, res) => {
         lte(matchesTable.timestamp, end)
       )
     )
-    .orderBy(asc(matchesTable.timestamp))
-    .then(matches => {
-      res.json(matches);
-    }).catch(err => {
-      console.error("Failed to fetch matches:", err);
-      res.status(500).json({ error: "Failed to fetch matches" });
-    });
+    .orderBy(asc(matchesTable.timestamp));
+
+  return res.json(matches);
 });
 
 export default matchesRouter;

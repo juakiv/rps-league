@@ -7,6 +7,8 @@ import { matchesTable, NewMatch } from "../db/schema";
 /*
  * todo:
  * - only ingest until we reach the last ingested match
+ * - history endpoint seems to update when there are 300 new matches
+ *   and the cursors seem to be stable -> use cursor to determine where to stop
  */
 export async function ingestHistory() {
   let cursor: string | null = null;
