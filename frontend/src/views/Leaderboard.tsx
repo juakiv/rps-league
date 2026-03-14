@@ -62,8 +62,8 @@ export default function Leaderboard() {
 
         <div className="flex gap-2 items-center">
           Date range:
-          <input type="date" className="px-3 py-2 rounded bg-neutral-700" max={endDate} value={startDateInput} onChange={(e) => setStartDateInput(e.target.value)} /> -
-          <input type="date" className="px-3 py-2 rounded bg-neutral-700" min={startDate} value={endDateInput} onChange={(e) => setEndDateInput(e.target.value)} />
+          <input type="date" className="px-3 py-2 rounded bg-neutral-700" max={endDateInput} value={startDateInput} onChange={(e) => setStartDateInput(e.target.value)} /> -
+          <input type="date" className="px-3 py-2 rounded bg-neutral-700" min={startDateInput} value={endDateInput} onChange={(e) => setEndDateInput(e.target.value)} />
           <button className="px-3 py-2 bg-neutral-700 rounded" onClick={() => changeDateRange(startDateInput, endDateInput)}>Filter</button>
         </div>
       </div>
