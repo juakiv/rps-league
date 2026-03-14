@@ -76,7 +76,7 @@ export default function Matches() {
         </div>
       </div>
 
-      <h2 className="text-2xl my-2">Matches {formatDate(new Date()) === startDate ? "for today" : `from ${startDate} to ${endDate}`}</h2>
+      <h2 className="text-2xl my-2">Matches {formatDate(new Date()) === startDate ? "for today" : `from ${new Date(startDate).toLocaleDateString("en-GB")} to ${new Date(endDate).toLocaleDateString("en-GB")}`}</h2>
 
       <div className="bg-neutral-800 border border-neutral-600 rounded">
         <div className="flex flex-row px-4 py-2 bg-neutral-700 rounded-t">
@@ -114,8 +114,8 @@ export default function Matches() {
                 <Link to={`/players/${match.player_b_name}`}>{match.player_b_name}</Link> 
                 <span className="text-xs font-bold bg-rose-600/20 border border-rose-800/40 rounded px-1 py-0.5 inline-block ml-1">{getMoveAsEmoji(match.player_b_move)} {match.player_b_move}</span>
               </div>
-              <div className="flex-1">{match.winner === "DRAW" ? "DRAW!" : match.winner === "B" ? match.player_b_name : match.winner === "A" ? match.player_a_name : "Unknown"}</div>
-              <div className="flex-1">{new Date(match.timestamp).toLocaleString()}</div>
+              <div className="flex-1">{match.winner === "DRAW" ? "DRAW!" : match.winner === "B" ? match.player_b_name : match.winner === "A" ? match.player_a_name : "Invalid Winner"}</div>
+              <div className="flex-1">{new Date(match.timestamp).toLocaleString("en-GB", { timeZone: "UTC" })}</div>
             </motion.div>
           ))}
         </AnimatePresence>

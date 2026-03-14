@@ -68,7 +68,7 @@ export default function Leaderboard() {
         </div>
       </div>
 
-      <h2 className="text-2xl my-2">Leaderboard {formatDate(new Date()) === startDate ? "for today" : `from ${startDate} to ${endDate}`}</h2>
+      <h2 className="text-2xl my-2">Leaderboard {formatDate(new Date()) === startDate ? "for today" : `from ${new Date(startDate).toLocaleDateString("en-GB")} to ${new Date(endDate).toLocaleDateString("en-GB")}`}</h2>
       <div className="flex flex-row items-end gap-2 mb-4">
         <div className="flex-1 bg-slate-400/40 p-4 rounded my-4 h-60 items-center justify-center flex flex-col">
           <div className="text-4xl">🥈</div>
@@ -112,7 +112,7 @@ export default function Leaderboard() {
         <AnimatePresence initial={false}>
           {others.map((match: any, index: number) => (
             <motion.div
-              key={match.game_id}
+              key={match.player}
               layout
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
