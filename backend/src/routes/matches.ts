@@ -12,7 +12,18 @@ const matchesRouter = Router();
 // latest matches. add live!
 matchesRouter.get("/", async (req, res) => {
   const { page = "1", pageSize = "20" } = req.query;
-  const matches = db.select().from(matchesTable).orderBy(sql`timestamp DESC`);
+  const matches = db
+    .select({
+      game_id: matchesTable.game_id,
+      timestamp: matchesTable.timestamp,
+      player_a_name: matchesTable.player_a_name,
+      player_a_move: matchesTable.player_a_move,
+      player_b_name: matchesTable.player_b_name,
+      player_b_move: matchesTable.player_b_move,
+      winner: matchesTable.winner,
+    })
+    .from(matchesTable)
+    .orderBy(sql`timestamp DESC`);
 
   const result = await paginate(db, matches, parseInt(page as string), parseInt(pageSize as string));
   return res.json(result);
@@ -26,7 +37,15 @@ matchesRouter.get("/:date", async (req, res) => {
   const { start, end } = getDayRange(new Date(date));
 
   const matches = db
-    .select()
+    .select({
+      game_id: matchesTable.game_id,
+      timestamp: matchesTable.timestamp,
+      player_a_name: matchesTable.player_a_name,
+      player_a_move: matchesTable.player_a_move,
+      player_b_name: matchesTable.player_b_name,
+      player_b_move: matchesTable.player_b_move,
+      winner: matchesTable.winner,
+    })
     .from(matchesTable)
     .where(
       and(

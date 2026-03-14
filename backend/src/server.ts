@@ -3,8 +3,10 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 
-import matchesRouter from "./routes/matches";
 import { ingestHistory } from "./services/ingestor";
+import { startLiveMatchesIngestion } from "./services/liveMatches";
+
+import matchesRouter from "./routes/matches";
 import leaderboardRouter from "./routes/leaderboard";
 import playersRouter from "./routes/players";
 
@@ -24,5 +26,6 @@ app.use("/api/players", playersRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  startLiveMatchesIngestion();
   ingestHistory();
 });
