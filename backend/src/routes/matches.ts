@@ -5,23 +5,29 @@ import { matchesTable } from "../db/schema";
 import { db } from "../db/db";
 
 import { getDayRange } from "../utils/getDayRange";
+import { paginate } from "../utils/pagination";
 
 const matchesRouter = Router();
 
-// add pagination to all endpoints that return multiple matches
-// maybe make a reusable paginator util
 // move business logic to controllers
 
-matchesRouter.get("/", async (_req, res) => {
-  const matches = await db.select().from(matchesTable).orderBy(asc(matchesTable.timestamp));
-  res.json(matches);
+// latest matches. add live!
+matchesRouter.get("/", async (req, res) => {
+  const { page = "1", pageSize = "20" } = req.query;
+  const matches = db.select().from(matchesTable).orderBy(asc(matchesTable.timestamp));
+
+  const result = await paginate(db, matches, parseInt(page as string), parseInt(pageSize as string));
+  return res.json(result);
 });
 
+// matches by date
 matchesRouter.get("/:date", async (req, res) => {
   const { date } = req.params;
+  const { page = "1", pageSize = "20" } = req.query;
+
   const { start, end } = getDayRange(new Date(date));
 
-  const matches = await db
+  const matches = db
     .select()
     .from(matchesTable)
     .where(
@@ -32,7 +38,8 @@ matchesRouter.get("/:date", async (req, res) => {
     )
     .orderBy(asc(matchesTable.timestamp));
 
-  return res.json(matches);
+  const result = await paginate(db, matches, parseInt(page as string), parseInt(pageSize as string));
+  return res.json(result);
 });
 
 export default matchesRouter;
