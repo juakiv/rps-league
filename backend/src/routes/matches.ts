@@ -9,8 +9,6 @@ import { paginate } from "../utils/pagination";
 
 const matchesRouter = Router();
 
-// move business logic to controllers
-
 // latest matches. add live!
 matchesRouter.get("/", async (req, res) => {
   const { page = "1", pageSize = "20" } = req.query;
