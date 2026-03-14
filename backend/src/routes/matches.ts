@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { and, asc, gte, lte } from "drizzle-orm";
+import { and, gte, lte, sql } from "drizzle-orm";
 
 import { matchesTable } from "../db/schema";
 import { db } from "../db/db";
@@ -12,7 +12,7 @@ const matchesRouter = Router();
 // latest matches. add live!
 matchesRouter.get("/", async (req, res) => {
   const { page = "1", pageSize = "20" } = req.query;
-  const matches = db.select().from(matchesTable).orderBy(asc(matchesTable.timestamp));
+  const matches = db.select().from(matchesTable).orderBy(sql`timestamp DESC`);
 
   const result = await paginate(db, matches, parseInt(page as string), parseInt(pageSize as string));
   return res.json(result);
@@ -34,7 +34,7 @@ matchesRouter.get("/:date", async (req, res) => {
         lte(matchesTable.timestamp, end)
       )
     )
-    .orderBy(asc(matchesTable.timestamp));
+    .orderBy(sql`timestamp DESC`);
 
   const result = await paginate(db, matches, parseInt(page as string), parseInt(pageSize as string));
   return res.json(result);
