@@ -33,7 +33,7 @@ leaderboardRouter.get("/", async (req, res) => {
       )
     )
     .groupBy(sql`player`)
-    .orderBy(sql`wins DESC`);
+    .orderBy(sql`wins DESC`, sql`lower(player) ASC`);
 
   const result = await paginate(db, leaderboard, parseInt(page as string), parseInt(pageSize as string));
   return res.json(result);
@@ -63,7 +63,7 @@ leaderboardRouter.get("/today", async (req, res) => {
       )
     )
     .groupBy(sql`player`)
-    .orderBy(sql`wins DESC`);
+    .orderBy(sql`wins DESC`, sql`lower(player) ASC`);
 
   const result = await paginate(db, leaderboard, parseInt(page as string), parseInt(pageSize as string));
   return res.json(result);
