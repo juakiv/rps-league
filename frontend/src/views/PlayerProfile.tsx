@@ -1,38 +1,85 @@
 import { Link, useParams, useSearchParams } from "react-router";
+import { useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "motion/react";
 
 import APIFetch from "../utils/APIFetch";
+import { formatDate, getCurrentMonthRange, getCurrentWeekRange } from "../utils/dateUtils";
 
 import { SkeletonRow } from "../components/Skeleton";
 import Move from "../components/Move";
 
 export default function PlayerProfile() {
-  const { name } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { name }: { name?: string } = useParams();
 
   const page = Number(searchParams.get("page") || 1);
 
+  const startDate = searchParams.get("startDate") || formatDate(new Date("2026-01-01"));
+  const endDate = searchParams.get("endDate") || formatDate(new Date());
+
+  const [startDateInput, setStartDateInput] = useState(startDate);
+  const [endDateInput, setEndDateInput] = useState(endDate);
+
   const { data, isFetching, error }: { data: any; isFetching: boolean; error: any } = useQuery({
-    queryKey: ["playerProfile", name, page],
-    queryFn: () => APIFetch(`/api/players?name=${name}&pageSize=30&page=${page}`),
+    queryKey: ["player", name, startDate, endDate, page],
+    queryFn: () => APIFetch(`/api/players?name=${name}&pageSize=30&startDate=${startDate}&endDate=${endDate}&page=${page}`),
     refetchInterval: 10000,
     placeholderData: keepPreviousData
   });
 
+  const changeDateRange = (newStartDate: string, newEndDate: string) => {
+    setSearchParams({ startDate: newStartDate, endDate: newEndDate });
+    setStartDateInput(newStartDate);
+    setEndDateInput(newEndDate);
+  };
+
+  const setToday = () => changeDateRange(formatDate(new Date()), formatDate(new Date()));
+  const setThisWeek = () => {
+    const { start, end } = getCurrentWeekRange();
+    changeDateRange(start, end);
+  };
+  const setThisMonth = () => {
+    const { start, end } = getCurrentMonthRange();
+    changeDateRange(start, end);
+  };
+
   const pagination = data?.pagination || { page: 1, totalPages: 1 };
-  const goToPage = (newPage: number) => setSearchParams({ page: newPage.toString() });
+  const goToPage = (newPage: number) => {
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      params.set("page", newPage.toString());
+      return params;
+    });
+  };
 
   const matches = data?.data || [];
 
   return (
     <>
-      <div className="flex justify-between items-center gap-2 mb-4">
-        <h2 className="text-2xl">{name}'s latest matches ({pagination.totalItems || 0} matches)</h2>
-        <div className="flex items-center gap-1 font-bold">
-          <span className="inline-block size-4 bg-red-600 rounded-full mr-1 animate-pulse"></span> LIVE
+      <div className="flex items-center mb-4 justify-between">
+        <div className="flex gap-2">
+          <button className="px-3 py-2 bg-neutral-700 rounded" onClick={setToday}>
+            Today
+          </button>
+          <button className="px-3 py-2 bg-neutral-700 rounded" onClick={setThisWeek}>
+            This week
+          </button>
+          <button className="px-3 py-2 bg-neutral-700 rounded" onClick={setThisMonth}>
+            This month
+          </button>
+        </div>
+
+        <div className="flex gap-2 items-center">
+          Date range:
+          <input type="date" className="px-3 py-2 rounded bg-neutral-700" max={endDateInput} value={startDateInput} onChange={(e) => setStartDateInput(e.target.value)} /> -
+          <input type="date" className="px-3 py-2 rounded bg-neutral-700" min={startDateInput} value={endDateInput} onChange={(e) => setEndDateInput(e.target.value)} />
+          <button className="px-3 py-2 bg-neutral-700 rounded" onClick={() => changeDateRange(startDateInput, endDateInput)}>Filter</button>
         </div>
       </div>
+
+      <h2 className="text-2xl my-2">{name}'s matches {formatDate(new Date()) === startDate ? "for today" : `from ${new Date(startDate).toLocaleDateString("en-GB")} to ${new Date(endDate).toLocaleDateString("en-GB")}`}</h2>
+
       <div className="bg-neutral-800 border border-neutral-600 rounded">
         <div className="flex flex-row px-4 py-2 bg-neutral-700 rounded-t">
           <div className="font-bold flex-1">Player 1</div>
@@ -90,5 +137,5 @@ export default function PlayerProfile() {
         </button>
       </div>
     </>
-  )
+  );
 }
