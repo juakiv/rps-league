@@ -1,26 +1,29 @@
 import { Link, Route, Routes } from "react-router";
 
 import Home from "./views/Home";
+import Leaderboard from "./views/Leaderboard";
 
 export default function App() {
   return (
     <>
       <nav className="bg-neutral-800 py-4">
-        <div className="flex justify-between items-center container mx-auto">
-          <Link href="/" className="text-xl font-bold">RPS League</Link>
+        <div className="flex justify-between items-center w-260 mx-auto">
+          <Link to="/" className="text-xl font-bold">RPS League</Link>
           <div>
-            <a href="#" className="px-3 py-2 rounded hover:bg-neutral-700">
+            <Link to="/" className="px-3 py-2 rounded hover:bg-neutral-700">
               Matches
-            </a>
-            <a href="#" className="px-3 py-2 rounded hover:bg-neutral-700">
+            </Link>
+            <Link to="/leaderboard" className="px-3 py-2 rounded hover:bg-neutral-700">
               Leaderboard
-            </a>
+            </Link>
           </div>
         </div>
       </nav>
-      <main className="container mx-auto my-4">
+      <main className="w-260 mx-auto my-4">
         <Routes>
           <Route index element={<Home />} />
+
+          <Route path="/leaderboard" element={<Leaderboard />} />
         </Routes>
       </main>
     </>

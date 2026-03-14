@@ -1,57 +1,77 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "react-router";
+import { useQuery } from "@tanstack/react-query";
 
 import APIFetch from "../utils/APIFetch";
 import { getMoveAsEmoji } from "../utils/getMoveAsEmoji";
+import { AnimatePresence, motion } from "motion/react";
+
+function SkeletonRow({ i }: { i: number }) {
+  return (
+    <div key={i} className="flex flex-row px-4 py-2 gap-2 border-t border-neutral-600 animate-pulse">
+      <div className="flex-1 h-5 bg-neutral-700 rounded w-32"></div>
+      <div className="flex-1 h-5 bg-neutral-700 rounded w-32"></div>
+      <div className="flex-1 h-5 bg-neutral-700 rounded w-24"></div>
+      <div className="flex-1 h-5 bg-neutral-700 rounded w-40"></div>
+    </div>
+  );
+}
 
 export default function Home() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = Number(searchParams.get("page") || 1);
-
   const { data, isFetching, error }: { data: any; isFetching: boolean; error: any } = useQuery({
-    queryKey: ["matches", page],
-    queryFn: () => APIFetch(`/api/matches?page=${page}`),
-    placeholderData: keepPreviousData
+    queryKey: ["matches"],
+    queryFn: () => APIFetch(`/api/matches?pageSize=30`),
+    refetchInterval: 10000,
   });
 
-  const pagination = data?.pagination;
-  const goToPage = (p: number) => setSearchParams({ page: String(p) });
+  const matches = data?.data || [];
 
   return (
     <>
-      <h2>Latest matches</h2>
-      {isFetching && <p>Loading...</p>}
-      {error && <p>Error occurred</p>}
-      {data && (
-        <>
-          <div className="bg-neutral-800 border border-neutral-600 rounded">
-            <div className="flex flex-row px-4 py-2 bg-neutral-700 rounded-t">
-              <div className="font-bold flex-1">Player 1</div>
-              <div className="font-bold flex-1">Player 2</div>
-              <div className="font-bold flex-1">Winner</div>
-              <div className="font-bold flex-1">Date</div>
-            </div>
-            {data.data.map((match: any) => (
-              <div key={match.game_id} className="flex flex-row px-4 py-2 border-t border-neutral-600">
-                <div className="flex-1">{match.player_a_name} <span className="text-sm bg-green-600/20 border border-green-800/40 rounded px-1 py-0.5">{getMoveAsEmoji(match.player_a_move)} {match.player_a_move}</span></div>
-                <div className="flex-1">{match.player_b_name} <span className="text-sm bg-rose-600/20 border border-rose-800/40 rounded px-1 py-0.5">{getMoveAsEmoji(match.player_b_move)} {match.player_b_move}</span></div>
-                <div className="flex-1">{match.winner === "DRAW" ? "DRAW!" : match.winner === "B" ? match.player_b_name : match.player_a_name}</div>
-                <div className="flex-1">{new Date(match.timestamp).toLocaleString()}</div>
-              </div>
-            ))}
+      <div className="bg-neutral-800 border border-neutral-600 rounded p-4 mb-6">
+        <h2 className="text-xl">Total Matches Played</h2>
+        <p className="text-4xl font-bold">{data?.pagination.totalItems || "..."}</p>
+      </div>
+      <div className="flex justify-between items-center gap-2 mb-4">
+        <h2 className="text-2xl">Latest matches</h2>
+        <div className="flex items-center gap-1 font-bold">
+          <span className="inline-block size-4 bg-red-600 rounded-full mr-1 animate-pulse"></span> LIVE
+        </div>
+      </div>
+      <div className="bg-neutral-800 border border-neutral-600 rounded">
+        <div className="flex flex-row px-4 py-2 bg-neutral-700 rounded-t">
+          <div className="font-bold flex-1">Player 1</div>
+          <div className="font-bold flex-1">Player 2</div>
+          <div className="font-bold flex-1">Winner</div>
+          <div className="font-bold flex-1">Date</div>
+        </div>
+        {error && (
+          <div className="p-4 text-red-500 text-center">
+            Failed to load matches: {error.message}
           </div>
-
-          <div className="flex items-center justify-between mt-4">
-            <button className="px-3 py-1 bg-neutral-700 rounded disabled:opacity-50" disabled={page === 1} onClick={() => goToPage(page - 1)}>
-              Previous
-            </button>
-            <span>Page {pagination.page} / {pagination.totalPages}</span>
-            <button className="px-3 py-1 bg-neutral-700 rounded disabled:opacity-50" disabled={page === pagination.totalPages} onClick={() => goToPage(page + 1)}>
-              Next
-            </button>
-          </div>
-        </>
-      )}
+        )}
+        {isFetching && !data && (
+          <>
+            {Array.from({ length: 30 }).map((_, i) => <SkeletonRow key={i} i={i} />)}
+          </>
+        )}
+        <AnimatePresence initial={false}>
+          {matches.map((match: any) => (
+            <motion.div
+              key={match.game_id}
+              layout
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="flex flex-row px-4 py-2 border-t border-neutral-600"
+            >
+              <div className="flex-1">{match.player_a_name} <span className="text-xs font-bold bg-green-600/20 border border-green-800/40 rounded px-1 py-0.5">{getMoveAsEmoji(match.player_a_move)} {match.player_a_move}</span></div>
+              <div className="flex-1">{match.player_b_name} <span className="text-xs font-bold bg-rose-600/20 border border-rose-800/40 rounded px-1 py-0.5">{getMoveAsEmoji(match.player_b_move)} {match.player_b_move}</span></div>
+              <div className="flex-1">{match.winner === "DRAW" ? "DRAW!" : match.winner === "B" ? match.player_b_name : match.winner === "A" ? match.player_a_name : "Unknown"}</div>
+              <div className="flex-1">{new Date(match.timestamp).toLocaleString()}</div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
     </>
   )
 }
