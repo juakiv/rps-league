@@ -11,7 +11,9 @@ const matchesRouter = Router();
 
 // latest matches. add live!
 matchesRouter.get("/", async (req, res) => {
-  const { page = "1", pageSize = "20" } = req.query;
+  const { page = "1", pageSize = "20", startDate = new Date("2026-01-01"), endDate = new Date() } = req.query;
+  const { start, end } = getDatesRange(new Date(startDate as string), new Date(endDate as string));
+
   const matches = db
     .select({
       game_id: matchesTable.game_id,
@@ -23,6 +25,12 @@ matchesRouter.get("/", async (req, res) => {
       winner: matchesTable.winner,
     })
     .from(matchesTable)
+    .where(
+      and(
+        gte(matchesTable.timestamp, start),
+        lte(matchesTable.timestamp, end)
+      )
+    )
     .orderBy(sql`timestamp DESC`);
 
   const result = await paginate(db, matches, parseInt(page as string), parseInt(pageSize as string));

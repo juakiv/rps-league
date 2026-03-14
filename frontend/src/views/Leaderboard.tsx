@@ -1,13 +1,12 @@
+import { Link, useSearchParams } from "react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "motion/react";
 
 import APIFetch from "../utils/APIFetch";
+import { formatDate, getCurrentMonthRange, getCurrentWeekRange } from "../utils/dateUtils";
 
 import { SkeletonRow } from "../components/Skeleton";
-import { useSearchParams } from "react-router";
-
-const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
 export default function Leaderboard() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -32,26 +31,13 @@ export default function Leaderboard() {
   const setToday = () => changeDateRange(formatDate(new Date()), formatDate(new Date()));
 
   const setThisWeek = () => {
-    const now = new Date();
-    const day = now.getDay();
-    const diff = (day === 0 ? -6 : 1) - day;
-
-    const monday = new Date(now);
-    monday.setDate(now.getDate() + diff);
-
-    const sunday = new Date(monday);
-    sunday.setDate(monday.getDate() + 6);
-
-    changeDateRange(formatDate(monday), formatDate(sunday));
+    const { start, end } = getCurrentWeekRange();
+    changeDateRange(start, end);
   };
 
   const setThisMonth = () => {
-    const now = new Date();
-
-    const first = new Date(now.getFullYear(), now.getMonth(), 1);
-    const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-    changeDateRange(formatDate(first), formatDate(last));
+    const { start, end } = getCurrentMonthRange();
+    changeDateRange(start, end);
   };
 
   const firstPlace = data?.data[0] || null;
@@ -76,8 +62,8 @@ export default function Leaderboard() {
 
         <div className="flex gap-2 items-center">
           Date range:
-          <input type="date" className="px-3 py-2 rounded bg-neutral-700" value={startDateInput} onChange={(e) => setStartDateInput(e.target.value)} /> -
-          <input type="date" className="px-3 py-2 rounded bg-neutral-700" value={endDateInput} onChange={(e) => setEndDateInput(e.target.value)} />
+          <input type="date" className="px-3 py-2 rounded bg-neutral-700" max={endDate} value={startDateInput} onChange={(e) => setStartDateInput(e.target.value)} /> -
+          <input type="date" className="px-3 py-2 rounded bg-neutral-700" min={startDate} value={endDateInput} onChange={(e) => setEndDateInput(e.target.value)} />
           <button className="px-3 py-2 bg-neutral-700 rounded" onClick={() => changeDateRange(startDateInput, endDateInput)}>Filter</button>
         </div>
       </div>
@@ -86,17 +72,23 @@ export default function Leaderboard() {
       <div className="flex flex-row items-end gap-2 mb-4">
         <div className="flex-1 bg-slate-400/40 p-4 rounded my-4 h-60 items-center justify-center flex flex-col">
           <div className="text-4xl">🥈</div>
-          <h2 className="text-2xl font-bold">{secondPlace?.player || "..."}</h2>
+          <Link to={`/players/${secondPlace?.player}`} className="text-2xl font-bold">
+            {secondPlace?.player || "..."}
+          </Link>
           <p>{secondPlace?.wins || "0"} wins</p>
         </div>
         <div className="flex-1 bg-yellow-400/40 p-4 rounded my-4 h-80 items-center justify-center flex flex-col">
           <div className="text-4xl">🥇</div>
-          <h2 className="text-2xl font-bold">{firstPlace?.player || "..."}</h2>
+          <Link to={`/players/${firstPlace?.player}`} className="text-2xl font-bold">
+            {firstPlace?.player || "..."}
+          </Link>
           <p>{firstPlace?.wins || "0"} wins</p>
         </div>
         <div className="flex-1 bg-amber-800/40 p-4 rounded my-4 h-50 items-center justify-center flex flex-col">
           <div className="text-4xl">🥉</div>
-          <h2 className="text-2xl font-bold">{thirdPlace?.player || "..."}</h2>
+          <Link to={`/players/${thirdPlace?.player}`} className="text-2xl font-bold">
+            {thirdPlace?.player || "..."}
+          </Link>
           <p>{thirdPlace?.wins || "0"} wins</p>
         </div>
       </div>
@@ -129,7 +121,9 @@ export default function Leaderboard() {
               className="flex flex-row px-4 py-2 border-t border-neutral-600"
             >
               <div className="w-20">{index + 4}</div>
-              <div className="flex-1">{match.player}</div>
+              <Link to={`/players/${match.player}`} className="flex-1">
+                {match.player}
+              </Link>
               <div className="flex-1">{match.wins}</div>
             </motion.div>
           ))}
