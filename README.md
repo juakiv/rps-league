@@ -9,10 +9,12 @@ git clone git@github.com:juakiv/rps-league.git
 ```
 2. Install dependencies on both frontend and backend. You can do this either by running `npm install` in both directories or you can run `npm run install-apps` in the project root.
 3. Set up environment variables. Both backend and frontend directories have an `.env.example` file that you can rename to `.env`. It should be enough to set your API key in backend environment variables.
-4. Migrate the database by running `npm run db-push --workspace=backend`.
+4. Migrate the database by running `npm run db-push --workspace=backend`. This creates the SQLite database.
 5. Run the app with `npm run dev` in project root. This will start both backend and frontend.
 
 You can also build the app by running `npm run build` in both frontend and backend, or in the project root. Then you can run the built application by running `npm run start` in project root.
+
+Initial history ingestion takes a while, roughly 3-5 minutes. After that history is only ingested up to previous ingestion starting position.
 
 ## Project structure
 This project is organized as a monorepo containing both the frontend and backend applications in a single repository.
