@@ -1,11 +1,11 @@
 import { and, gte, isNotNull, lte, notInArray, sql } from "drizzle-orm";
 import { Router } from "express";
 
-import { matchesTable } from "../db/schema";
-import { db } from "../db/db";
+import { matchesTable } from "../db/schema.js";
+import { db } from "../db/db.js";
 
-import { getDatesRange } from "../utils/getDatesRange";
-import { paginate } from "../utils/pagination";
+import { getDatesRange } from "../utils/getDatesRange.js";
+import { paginate } from "../utils/pagination.js";
 
 const leaderboardRouter = Router();
 

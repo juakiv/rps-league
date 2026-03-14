@@ -1,9 +1,9 @@
 import "dotenv/config";
 
-import { matchesTable } from "../db/schema";
-import { db } from "../db/db";
+import { matchesTable } from "../db/schema.js";
+import { db } from "../db/db.js";
 
-import { normalizeMatch } from "../utils/normalizeMatch";
+import { normalizeMatch } from "../utils/normalizeMatch.js";
 
 let isConnected = false;
 let isRunning = false;

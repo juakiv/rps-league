@@ -1,4 +1,4 @@
-import { Player, Winner } from "../types";
+import { Player, Winner } from "../types.js";
 
 export function computeWinner(playerA: Player, playerB: Player): Winner | null {
   const aMove = playerA.played?.toUpperCase();

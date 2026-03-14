@@ -1,5 +1,5 @@
-import { NewMatch } from "../db/schema";
-import { computeWinner } from "./computeWinner";
+import { NewMatch } from "../db/schema.js";
+import { computeWinner } from "./computeWinner.js";
 
 function isValidIsoString(time: unknown): time is string {
   return typeof time === "string" && !isNaN(Date.parse(time));

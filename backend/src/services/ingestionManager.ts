@@ -1,5 +1,5 @@
-import { ingestHistory } from "./ingestor";
-import { isLiveIngestionConnected, startLiveMatchesIngestion } from "./liveMatches";
+import { ingestHistory } from "./ingestor.js";
+import { isLiveIngestionConnected, startLiveMatchesIngestion } from "./liveMatches.js";
 
 export default function startIngestion() {
   ingestHistory();

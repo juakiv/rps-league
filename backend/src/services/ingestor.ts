@@ -1,11 +1,11 @@
 import { isNotNull, sql } from "drizzle-orm";
 
-import { db } from "../db/db";
-import { matchesTable, NewMatch } from "../db/schema";
+import { db } from "../db/db.js";
+import { matchesTable, NewMatch } from "../db/schema.js";
 
-import { normalizeMatch } from "../utils/normalizeMatch";
+import { normalizeMatch } from "../utils/normalizeMatch.js";
 
-import { fetchHistory } from "./history";
+import { fetchHistory } from "./history.js";
 
 async function getLastIngestedCursor(): Promise<string | null> {
   const lastMatch = await db

@@ -1,4 +1,4 @@
-import { History } from "../types";
+import { History } from "../types.js";
 
 export async function fetchHistory(cursor: string | null): Promise<History> {
   let retryCount = 0;

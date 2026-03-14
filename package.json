@@ -6,7 +6,10 @@
     "backend"
   ],
   "scripts": {
-    "dev": "concurrently \"npm run dev --workspace=frontend\" \"npm run dev --workspace=backend\""
+    "dev": "concurrently \"npm run dev --workspace=frontend\" \"npm run dev --workspace=backend\"",
+    "install-apps": "npm install && npm install --workspace=frontend && npm install --workspace=backend && npm run db-push --workspace=backend",
+    "build": "npm run build --workspace=frontend && npm run build --workspace=backend",
+    "start": "concurrently \"npm run preview --workspace=frontend\" \"npm run start --workspace=backend\""
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

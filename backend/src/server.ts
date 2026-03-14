@@ -3,11 +3,11 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 
-import startIngestion from "./services/ingestionManager";
+import startIngestion from "./services/ingestionManager.js";
 
-import matchesRouter from "./routes/matches";
-import leaderboardRouter from "./routes/leaderboard";
-import playersRouter from "./routes/players";
+import matchesRouter from "./routes/matches.js";
+import leaderboardRouter from "./routes/leaderboard.js";
+import playersRouter from "./routes/players.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;

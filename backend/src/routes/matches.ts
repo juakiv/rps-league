@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { and, gte, lte, sql } from "drizzle-orm";
 
-import { matchesTable } from "../db/schema";
-import { db } from "../db/db";
+import { matchesTable } from "../db/schema.js";
+import { db } from "../db/db.js";
 
-import { paginate } from "../utils/pagination";
-import { getDatesRange } from "../utils/getDatesRange";
+import { paginate } from "../utils/pagination.js";
+import { getDatesRange } from "../utils/getDatesRange.js";
 
 const matchesRouter = Router();
 
