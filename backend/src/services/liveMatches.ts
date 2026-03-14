@@ -57,6 +57,7 @@ async function connectToLiveMatches() {
   }
 
   isConnected = false;
+  isRunning = false;
   console.log("Stopped live matches ingestion.");
 }
 
@@ -67,7 +68,12 @@ export function startLiveMatchesIngestion() {
       connectToLiveMatches();
     } catch (err) {
       isConnected = false;
+      isRunning = false;
       console.error("Error starting live matches ingestion:", err);
     }
   }
+}
+
+export function isLiveIngestionConnected() {
+  return isConnected;
 }

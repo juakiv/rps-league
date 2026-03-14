@@ -32,7 +32,7 @@ export async function ingestHistory() {
   let totalMatches = 0;
   let lastIngestedCursor: string | null = await getLastIngestedCursor();
 
-  console.log(`Starting ingestion. Last ingested cursor: ${lastIngestedCursor}.`);
+  console.log(`Starting history ingestion. Last ingested cursor: ${lastIngestedCursor}.`);
 
   while(lastIngestedCursor === null || cursor !== lastIngestedCursor) {
     let history;
