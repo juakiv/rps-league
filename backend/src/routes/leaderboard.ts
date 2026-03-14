@@ -4,7 +4,6 @@ import { Router } from "express";
 import { matchesTable } from "../db/schema";
 import { db } from "../db/db";
 
-import { getDayRange } from "../utils/getDayRange";
 import { getDatesRange } from "../utils/getDatesRange";
 import { paginate } from "../utils/pagination";
 
@@ -42,7 +41,7 @@ leaderboardRouter.get("/", async (req, res) => {
 leaderboardRouter.get("/today", async (req, res) => {
   const { page = "1", pageSize = "20" } = req.query;
   const today = new Date();
-  const { start, end } = getDayRange(today);
+  const { start, end } = getDatesRange(today, today);
 
   const leaderboard = db
     .select({

@@ -2,6 +2,7 @@ import { Link, Route, Routes } from "react-router";
 
 import Home from "./views/Home";
 import Leaderboard from "./views/Leaderboard";
+import PlayerProfile from "./views/PlayerProfile";
 
 export default function App() {
   return (
@@ -10,12 +11,9 @@ export default function App() {
         <div className="flex justify-between items-center w-260 mx-auto">
           <Link to="/" className="text-xl font-bold">RPS League</Link>
           <div>
-            <Link to="/" className="px-3 py-2 rounded hover:bg-neutral-700">
-              Matches
-            </Link>
-            <Link to="/leaderboard" className="px-3 py-2 rounded hover:bg-neutral-700">
-              Leaderboard
-            </Link>
+            <Link to="/" className="px-3 py-2 rounded hover:bg-neutral-700">Homepage</Link>
+            <Link to="/" className="px-3 py-2 rounded hover:bg-neutral-700">Matches</Link>
+            <Link to="/leaderboard" className="px-3 py-2 rounded hover:bg-neutral-700">Leaderboard</Link>
           </div>
         </div>
       </nav>
@@ -24,6 +22,7 @@ export default function App() {
           <Route index element={<Home />} />
 
           <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/players/:name" element={<PlayerProfile />} />
         </Routes>
       </main>
     </>

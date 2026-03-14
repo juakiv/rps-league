@@ -4,8 +4,8 @@ import { and, gte, lte, sql } from "drizzle-orm";
 import { matchesTable } from "../db/schema";
 import { db } from "../db/db";
 
-import { getDayRange } from "../utils/getDayRange";
 import { paginate } from "../utils/pagination";
+import { getDatesRange } from "../utils/getDatesRange";
 
 const matchesRouter = Router();
 
@@ -34,7 +34,7 @@ matchesRouter.get("/:date", async (req, res) => {
   const { date } = req.params;
   const { page = "1", pageSize = "20" } = req.query;
 
-  const { start, end } = getDayRange(new Date(date));
+  const { start, end } = getDatesRange(new Date(date), new Date(date));
 
   const matches = db
     .select({

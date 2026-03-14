@@ -1,19 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
+import { AnimatePresence, motion } from "motion/react";
 
 import APIFetch from "../utils/APIFetch";
 import { getMoveAsEmoji } from "../utils/getMoveAsEmoji";
-import { AnimatePresence, motion } from "motion/react";
 
-function SkeletonRow({ i }: { i: number }) {
-  return (
-    <div key={i} className="flex flex-row px-4 py-2 gap-2 border-t border-neutral-600 animate-pulse">
-      <div className="flex-1 h-5 bg-neutral-700 rounded w-32"></div>
-      <div className="flex-1 h-5 bg-neutral-700 rounded w-32"></div>
-      <div className="flex-1 h-5 bg-neutral-700 rounded w-24"></div>
-      <div className="flex-1 h-5 bg-neutral-700 rounded w-40"></div>
-    </div>
-  );
-}
+import { SkeletonRow } from "../components/Skeleton";
+import { Link } from "react-router";
 
 export default function Home() {
   const { data, isFetching, error }: { data: any; isFetching: boolean; error: any } = useQuery({
@@ -64,8 +56,14 @@ export default function Home() {
               transition={{ duration: 0.25 }}
               className="flex flex-row px-4 py-2 border-t border-neutral-600"
             >
-              <div className="flex-1">{match.player_a_name} <span className="text-xs font-bold bg-green-600/20 border border-green-800/40 rounded px-1 py-0.5">{getMoveAsEmoji(match.player_a_move)} {match.player_a_move}</span></div>
-              <div className="flex-1">{match.player_b_name} <span className="text-xs font-bold bg-rose-600/20 border border-rose-800/40 rounded px-1 py-0.5">{getMoveAsEmoji(match.player_b_move)} {match.player_b_move}</span></div>
+              <div className="flex-1">
+                <Link to={`/players/${match.player_a_name}`}>{match.player_a_name}</Link> 
+                <span className="text-xs font-bold bg-green-600/20 border border-green-800/40 rounded px-1 py-0.5 inline-block ml-1">{getMoveAsEmoji(match.player_a_move)} {match.player_a_move}</span>
+              </div>
+              <div className="flex-1">
+                <Link to={`/players/${match.player_b_name}`}>{match.player_b_name}</Link> 
+                <span className="text-xs font-bold bg-rose-600/20 border border-rose-800/40 rounded px-1 py-0.5 inline-block ml-1">{getMoveAsEmoji(match.player_b_move)} {match.player_b_move}</span>
+              </div>
               <div className="flex-1">{match.winner === "DRAW" ? "DRAW!" : match.winner === "B" ? match.player_b_name : match.winner === "A" ? match.player_a_name : "Unknown"}</div>
               <div className="flex-1">{new Date(match.timestamp).toLocaleString()}</div>
             </motion.div>
