@@ -7,9 +7,8 @@ import { paginate } from "../utils/pagination";
 
 const playersRouter = Router();
 
-playersRouter.get("/:name", async (req, res) => {
-  const { name } = req.params;
-  const { page = "1", pageSize = "20" } = req.query;
+playersRouter.get("/", async (req, res) => {
+  const { name = "", page = "1", pageSize = "20" }: { name?: string; page?: string; pageSize?: string } = req.query;
   
   const playerMatches = db
     .select({

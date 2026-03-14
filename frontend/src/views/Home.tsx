@@ -3,9 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "motion/react";
 
 import APIFetch from "../utils/APIFetch";
-import { getMoveAsEmoji } from "../utils/getMoveAsEmoji";
 
 import { SkeletonRow } from "../components/Skeleton";
+import Move from "../components/Move";
 
 export default function Home() {
   const { data, isFetching, error }: { data: any; isFetching: boolean; error: any } = useQuery({
@@ -58,13 +58,18 @@ export default function Home() {
             >
               <div className="flex-1">
                 <Link to={`/players/${match.player_a_name}`}>{match.player_a_name}</Link> 
-                <span className="text-xs font-bold bg-green-600/20 border border-green-800/40 rounded px-1 py-0.5 inline-block ml-1">{getMoveAsEmoji(match.player_a_move)} {match.player_a_move}</span>
+                <Move move={match.player_a_move} isWinning={match.winner === "A" || match.winner === "DRAW"} />
               </div>
               <div className="flex-1">
                 <Link to={`/players/${match.player_b_name}`}>{match.player_b_name}</Link> 
-                <span className="text-xs font-bold bg-rose-600/20 border border-rose-800/40 rounded px-1 py-0.5 inline-block ml-1">{getMoveAsEmoji(match.player_b_move)} {match.player_b_move}</span>
+                <Move move={match.player_b_move} isWinning={match.winner === "B" || match.winner === "DRAW"} />
               </div>
-              <div className="flex-1">{match.winner === "DRAW" ? "DRAW!" : match.winner === "B" ? match.player_b_name : match.winner === "A" ? match.player_a_name : "Invalid Winner"}</div>
+              <div className="flex-1">
+                {match.winner === "DRAW" ? "DRAW!" : 
+                  match.winner === "B" ? <Link to={`/players/${match.player_b_name}`}>{match.player_b_name}</Link> :
+                  match.winner === "A" ? <Link to={`/players/${match.player_a_name}`}>{match.player_a_name}</Link> : 
+                  "Invalid Winner"}
+              </div>
               <div className="flex-1">{new Date(match.timestamp).toLocaleString("en-GB", { timeZone: "UTC" })}</div>
             </motion.div>
           ))}

@@ -38,34 +38,4 @@ leaderboardRouter.get("/", async (req, res) => {
   return res.json(result);
 });
 
-leaderboardRouter.get("/today", async (req, res) => {
-  const { page = "1", pageSize = "20" } = req.query;
-  const today = new Date();
-  const { start, end } = getDatesRange(today, today);
-
-  const leaderboard = db
-    .select({
-      player: sql<string>`CASE 
-        WHEN ${matchesTable.winner} = 'A' THEN ${matchesTable.player_a_name}
-        WHEN ${matchesTable.winner} = 'B' THEN ${matchesTable.player_b_name}
-        ELSE 'Unknown Player'
-      END`.as("player"),
-      wins: sql<number>`count(*)`.as("wins"),
-    })
-    .from(matchesTable)
-    .where(
-      and(
-        isNotNull(matchesTable.winner),
-        notInArray(matchesTable.winner, ["DRAW"]),
-        gte(matchesTable.timestamp, start),
-        lt(matchesTable.timestamp, end)
-      )
-    )
-    .groupBy(sql`player`)
-    .orderBy(sql`wins DESC`, sql`lower(player) ASC`);
-
-  const result = await paginate(db, leaderboard, parseInt(page as string), parseInt(pageSize as string));
-  return res.json(result);
-});
-
 export default leaderboardRouter;
