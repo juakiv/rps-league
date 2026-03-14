@@ -28,7 +28,7 @@ export default function PlayerProfile() {
   return (
     <>
       <div className="flex justify-between items-center gap-2 mb-4">
-        <h2 className="text-2xl">{name}'s latest matches</h2>
+        <h2 className="text-2xl">{name}'s latest matches ({pagination.totalItems || 0} matches)</h2>
         <div className="flex items-center gap-1 font-bold">
           <span className="inline-block size-4 bg-red-600 rounded-full mr-1 animate-pulse"></span> LIVE
         </div>

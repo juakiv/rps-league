@@ -1,16 +1,58 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "motion/react";
 
 import APIFetch from "../utils/APIFetch";
 
 import { SkeletonRow } from "../components/Skeleton";
+import { useSearchParams } from "react-router";
+
+const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
 export default function Leaderboard() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const startDate = searchParams.get("startDate") || formatDate(new Date());
+  const endDate = searchParams.get("endDate") || formatDate(new Date());
+
+  const [startDateInput, setStartDateInput] = useState(startDate);
+  const [endDateInput, setEndDateInput] = useState(endDate);
+
   const { data, isFetching, error }: { data: any; isFetching: boolean; error: any } = useQuery({
-    queryKey: ["leaderboard"],
-    queryFn: () => APIFetch(`/api/leaderboard?pageSize=30`),
+    queryKey: ["leaderboard", startDate, endDate],
+    queryFn: () => APIFetch(`/api/leaderboard?pageSize=30&startDate=${startDate}&endDate=${endDate}`),
     refetchInterval: 10000,
   });
+
+  const changeDateRange = (newStartDate: string, newEndDate: string) => {
+    setSearchParams({ startDate: newStartDate, endDate: newEndDate });
+    setStartDateInput(newStartDate);
+    setEndDateInput(newEndDate);
+  };
+
+  const setToday = () => changeDateRange(formatDate(new Date()), formatDate(new Date()));
+
+  const setThisWeek = () => {
+    const now = new Date();
+    const day = now.getDay();
+    const diff = (day === 0 ? -6 : 1) - day;
+
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + diff);
+
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+
+    changeDateRange(formatDate(monday), formatDate(sunday));
+  };
+
+  const setThisMonth = () => {
+    const now = new Date();
+
+    const first = new Date(now.getFullYear(), now.getMonth(), 1);
+    const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+    changeDateRange(formatDate(first), formatDate(last));
+  };
 
   const firstPlace = data?.data[0] || null;
   const secondPlace = data?.data[1] || null;
@@ -19,6 +61,28 @@ export default function Leaderboard() {
 
   return (
     <>
+      <div className="flex items-center mb-4 justify-between">
+        <div className="flex gap-2">
+          <button className="px-3 py-2 bg-neutral-700 rounded" onClick={setToday}>
+            Today
+          </button>
+          <button className="px-3 py-2 bg-neutral-700 rounded" onClick={setThisWeek}>
+            This week
+          </button>
+          <button className="px-3 py-2 bg-neutral-700 rounded" onClick={setThisMonth}>
+            This month
+          </button>
+        </div>
+
+        <div className="flex gap-2 items-center">
+          Date range:
+          <input type="date" className="px-3 py-2 rounded bg-neutral-700" value={startDateInput} onChange={(e) => setStartDateInput(e.target.value)} /> -
+          <input type="date" className="px-3 py-2 rounded bg-neutral-700" value={endDateInput} onChange={(e) => setEndDateInput(e.target.value)} />
+          <button className="px-3 py-2 bg-neutral-700 rounded" onClick={() => changeDateRange(startDateInput, endDateInput)}>Filter</button>
+        </div>
+      </div>
+
+      <h2 className="text-2xl my-2">Leaderboard {formatDate(new Date()) === startDate ? "for today" : `from ${startDate} to ${endDate}`}</h2>
       <div className="flex flex-row items-end gap-2 mb-4">
         <div className="flex-1 bg-slate-400/40 p-4 rounded my-4 h-60 items-center justify-center flex flex-col">
           <div className="text-4xl">🥈</div>
