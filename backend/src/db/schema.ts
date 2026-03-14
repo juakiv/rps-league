@@ -9,6 +9,7 @@ export const matchesTable = sqliteTable("matches_table", {
   player_b_name: text("player_b_name").notNull(),
   player_b_move: text("player_b_move").notNull(),
   winner: text("winner"),
+  cursor: text("cursor"),
 });
 
 export type NewMatch = InferInsertModel<typeof matchesTable>;
